@@ -4,6 +4,8 @@
  * Most most the code in this page is copied from Data Transfer extension. The code is a part of Data Transfer extension.
  */
 
+use MediaWiki\MediaWikiServices;
+
 class ENPageComponent {
 	var $mIsTemplate = false;
 	var $mTemplateName;
@@ -53,10 +55,10 @@ class ENPageComponent {
 	public function toXML( $isSimplified ) {
 		global $wgDataTransferViewXMLParseFields;
 		global $wgDataTransferViewXMLParseFreeText;
-		global $wgParser, $wgTitle;
+		global $wgTitle;
+		$parser = MediaWikiServices::getInstance()->getParser();
 		if ( $this->mIsTemplate ) {
-			global $wgContLang;
-			$namespace_labels = $wgContLang->getNamespaces();
+			$namespace_labels = MediaWikiServices::getInstance()->getContentLanguage()->getNamespaces();
 			$template_label = $namespace_labels[NS_TEMPLATE];
 			$field_str = str_replace( ' ', '_', wfMessage( 'en_xml_field' )->inContentLanguage()->text() );
 			$name_str = str_replace( ' ', '_', wfMessage( 'en_xml_name' )->inContentLanguage()->text() );
@@ -71,7 +73,7 @@ class ENPageComponent {
 					}
 				} elseif ( $wgDataTransferViewXMLParseFields ) {
 					// Avoid table of contents and "edit" links
-					$fieldValue = $wgParser->parse( "__NOTOC__ __NOEDITSECTION__\n" . $fieldValue, $wgTitle, new ParserOptions() )->getText();
+					$fieldValue = $parser->parse( "__NOTOC__ __NOEDITSECTION__\n" . $fieldValue, $wgTitle, new ParserOptions() )->getText();
 				}
 				if ( $isSimplified ) {
 					if ( is_numeric( $fieldName ) ) {
@@ -105,16 +107,16 @@ class ENPageComponent {
 				// Undo the escaping that happened before.
 				$freeText = str_replace( array( '&#123;', '&#125;' ), array( '{', '}' ), $freeText );
 				// Get rid of table of contents.
-				$mw = MagicWord::get( 'toc' );
+				$mw = \MediaWiki\MediaWikiServices::getInstance()->getMagicWordFactory()->get( 'toc' );
 				if ( $mw->match( $freeText ) ) {
 					$freeText = $mw->replace( '', $freeText );
 				}
 				// Avoid "edit" links.
-				$freeText = $wgParser->parse( "__NOTOC__ __NOEDITSECTION__\n" . $freeText, $wgTitle, new ParserOptions() )->getText();
+				$freeText = $parser->parse( "__NOTOC__ __NOEDITSECTION__\n" . $freeText, $wgTitle, new ParserOptions() )->getText();
 			} else {
 				$freeText = $this->mFreeText;
 			}
-			return XML::element( $free_text_str, array( 'id' => $this->mFreeTextID ), $freeText );
+			return Xml::element( $free_text_str, array( 'id' => $this->mFreeTextID ), $freeText );
 		}
 	}
 }

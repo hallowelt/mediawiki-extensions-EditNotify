@@ -8,6 +8,9 @@
 	"descriptionmsg": "editnotify-desc",
 	"license-name": "MIT",
 	"type": "other",
+	"requires": {
+		"MediaWiki": ">= 1.35.0"
+	},
 	"AutoloadClasses": {
 		"EditNotifyHooks": "EditNotify.hooks.php",
 		"ENPageStructure": "includes/ENPageStructure.php",
@@ -27,24 +30,17 @@
 		"EchoEditNotifyTemplateFormatter": "includes/formatters/EchoEditNotifyTemplateFormatter.php"
 	},
 	"config": {
-		"EditNotifyEnableFoo": true
+		"EditNotifyEnableFoo": true,
+		"EditNotifyAlerts": []
 	},
 	"ExtensionMessagesFiles": {
 		"EditNotifyAlias": "EditNotify.i18n.alias.php"
 	},
 	"Hooks": {
-		"BeforeCreateEchoEvent": [
-			"EditNotifyHooks::onBeforeCreateEchoEvent"
-		],
-		"EchoGetDefaultNotifiedUsers": [
-			"EditNotifyHooks::onEchoGetDefaultNotifiedUsers"
-		],
-		"PageContentSave": [
-			"EditNotifyHooks::onPageContentSave"
-		],
-		"PageContentInsertComplete": [
-			"EditNotifyHooks::onPageContentInsertComplete"
-		]
+		"BeforeCreateEchoEvent": "EditNotifyHooks::onBeforeCreateEchoEvent",
+		"EchoGetDefaultNotifiedUsers": "EditNotifyHooks::onEchoGetDefaultNotifiedUsers",
+		"PageContentSave": "EditNotifyHooks::onPageContentSave",
+		"PageSaveComplete": "EditNotifyHooks::onPageSaveComplete"
 	},
 	"MessagesDirs": {
 		"EditNotify": [
